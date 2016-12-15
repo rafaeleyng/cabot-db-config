@@ -1,0 +1,16 @@
+{
+  "name": "cabot-db-config",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Rafael Eyng <rafaeleyng@gmail.com> (https://github.com/rafaeleyng)",
+  "license": "MIT",
+  "dependencies": {
+    "bluebird": "3.4.6",
+    "lodash": "4.17.2",
+    "sequelize": "3.27.0"
+  }
+}
