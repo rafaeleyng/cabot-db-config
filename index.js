@@ -105,9 +105,11 @@ const initModels = (sequelize) => {
     frequency: Sequelize.INTEGER,
     calculated_status: Sequelize.INTEGER,
     status_code: Sequelize.STRING,
+    text_match: Sequelize.STRING,
     timeout: Sequelize.INTEGER,
     endpoint: Sequelize.STRING,
     allowed_num_failures: Sequelize.INTEGER,
+    debounce: Sequelize.INTEGER,
     polymorphic_ctype_id: Sequelize.INTEGER,
 
     active: Sequelize.BOOLEAN,
@@ -118,8 +120,8 @@ const initModels = (sequelize) => {
   })
 }
 
-const mapCheckType = (check) => {
-  if (check.type === 'http') {
+const mapCheckType = (type) => {
+  if (type === 'http') {
     return 32
   }
   return 34
@@ -132,11 +134,12 @@ const createChecks = (dataInstance, savedInstance, savedService) => {
       active: true,
       importance: 'ERROR',
       frequency: 5,
-      calculated_status: 'passing',
+      calculated_status: 'failed',
       verify_ssl_certificate: true,
       status_code: '200',
       timeout: 30,
       allowed_num_failures: 0,
+      debounce: 0,
       polymorphic_ctype_id: mapCheckType(c.type),
     }, c)
 
@@ -156,12 +159,13 @@ const createDefaultChecks = (savedInstance, savedService) => {
       active: true,
       importance: 'ERROR',
       frequency: 5,
-      calculated_status: 'passing',
+      calculated_status: 'failed',
       verify_ssl_certificate: true,
       status_code: '200',
       timeout: 30,
       allowed_num_failures: 0,
-      polymorphic_ctype_id: mapCheckType(c),
+      debounce: 0,
+      polymorphic_ctype_id: mapCheckType(c.type),
     }
 
     return Check.create(data).then((saved) => {
@@ -206,8 +210,8 @@ const createInstances = (dataService, savedService) => {
     const data = _.merge({
       name: `${i.address}`,
       runbook_link: '',
-      overall_status: 'PASSING',
-      old_overall_status: 'PASSING',
+      overall_status: 'FAILED',
+      old_overall_status: 'FAILED',
 
       sms_alert: false,
       email_alert: false,
@@ -229,8 +233,8 @@ const createServices = (dataConfig) => {
     const data = _.merge({
       url: '',
       runbook_link: '',
-      overall_status: 'PASSING',
-      old_overall_status: 'PASSING',
+      overall_status: 'failed',
+      old_overall_status: 'failed',
 
       sms_alert: false,
       email_alert: false,
